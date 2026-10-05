@@ -8,7 +8,11 @@
                <a-camera>
              <a-cursor></a-cursor>
           </a-camera>
-    
+   
+            <a-assets>
+      <audio id="Wind" src="SoundClip.mp3" preload="auto"></audio>
+ </a-assets>
+
     <a-plane position="0 0 -10" 
     rotation="-90 0 0" 
     width="60" 
@@ -17,6 +21,7 @@
     ></a-plane>
             
             <a-box color="orange"
+                 sound="src: #Wind on: click"
   position="0 1 -10" 
   depth="2" 
   height="2" 
