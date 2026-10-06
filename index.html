@@ -3,7 +3,6 @@
   <head>
     <script src="https://aframe.io"></script>
     <style>
-      /* Splash screen to force an official browser user click gesture */
       #overlay {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -41,13 +40,11 @@
       </a-camera>
 
       <a-assets>
-        <!-- Your original local background music track -->
-        <audio id="background-music" src="the_mountain-retro-game-593063.mp3" loop preload="auto"></audio>
-        <!-- Your original local wind track -->
-        <audio id="wind" src="SoundClip.mp3" preload="auto"></audio>
+        <!-- Added explicit relative paths and cross-origin handling for local media -->
+        <audio id="background-music" src="./the_mountain-retro-game-593063.mp3" loop crossorigin="anonymous" preload="auto"></audio>
+        <audio id="wind" src="./SoundClip.mp3" crossorigin="anonymous" preload="auto"></audio>
       </a-assets>
 
-      <!-- Fixed double quotes issue around rotation attribute -->
       <a-plane position="0 0 -10" rotation="-90 0 0" width="60" height="60" color="#7BC8A4"
                onclick="document.getElementById('wind').play()"></a-plane>
 
@@ -73,18 +70,20 @@
       startBtn.addEventListener('click', () => {
         overlay.style.display = 'none';
 
-        // Unlock browser's master Web Audio context channel directly
-        if (window.AudioContext || window.webkitAudioContext) {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          const ctx = new AudioCtx();
+        // Unlock browser audio hardware context manually on user interaction 
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          const ctx = new AudioContext();
           if (ctx.state === 'suspended') {
             ctx.resume();
           }
         }
 
-        // Run your background music file natively at 50% volume
+        // Initialize local background playback directly via Javascript DOM
         bgMusic.volume = 0.5;
-        bgMusic.play().catch(err => console.log("Audio failed to run:", err));
+        bgMusic.play().catch(err => {
+          console.error("Local file route failed to resolve: ", err);
+        });
       });
     </script>
   </body>
