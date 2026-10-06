@@ -1,114 +1,53 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
-    </head>
-    <body>
-       <a-scene sound="src: #backround music; autoplay: true; loop: true; volume: 0.5">
-               <a-camera>
-             <a-cursor></a-cursor>
-          </a-camera>
-   
-            <a-assets>
-        <audio id="Backround music" src="the_mountain-retro-game-593063.mp3" preload="auto"></audio>
-      <audio id="Wind" src="SoundClip.mp3" preload="auto"></audio>
- </a-assets>
+  <head>
+    <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <!-- 1. Tied the sound component to the fixed asset ID -->
+    <a-scene id="scene" sound="src: #background-music; autoplay: true; loop: true; volume: 0.5">
+      <a-camera>
+        <a-cursor></a-cursor>
+      </a-camera>
 
-    <a-plane position="0 0 -10" 
-         sound="src: #Wind; on: click; volume: 1;
-    rotation="-90 0 0" 
-    width="60" 
-    height="60" 
-    color="#7BC8A4"
-    ></a-plane>
-            
-            <a-box color="orange"
-                
-  position="0 1 -10" 
-  depth="2" 
-  height="2" 
-  width="2" 
-  animation="property: rotation; 
-  from: 0 0 0; 
-  to: 0 360 0; 
-  dur: 2000; 
-  easing: linear; 
-  loop: true;" 
-  animation__2="
-  property: position;
-  from: 0 1 -10;
-  to: 0 8 -10;
-  dir: alternate; 
-  dur: 1500; 
-  easing: easeInOutElastic; 
-  loop: true;"
-  animation__3="
-  property: scale;
-                    from: 1 1 1;
-                    to: 0 0 0;
-                    startEvents:click;"></a-box>
-            
-          
-          
-         <a-cone color="blue" 
-         radius-bottom="2" 
-         radius-top="0.5"
-         height="1" 
-         position="-6 6 -10" 
-         animation="property: position; 
-         from: -6 6 -10; 
-         to: -6 6 8; 
-         dir: alternate;
-         dur: 1500; 
-         easing: easeInOutElastic; 
-         loop: true;"
-         animation__2="
-  property: scale;
-                    from: 1 1 1;
-                    to: 0 0 0;
-                    startEvents:click;"></a-cone>
-          
-       
-          
-          
-          
-          
-          <a-sphere 
-  color="crimson" 
-  radius="1" 
-  position="-3 1 10"
-  animation="property: position; 
-  from: -3 1 10; 
-  to: -8 5 10; 
-  dir: alternate; 
-  dur: 1900; 
-  easing: easeInOutElastic; 
-  loop: true;"
-  animation__2="
-  property: scale;
-                    from: 1 1 1;
-                    to: 0 0 0;
-                    startEvents:click;"
-  
-  ></a-sphere>
+      <a-assets>
+        <!-- 2. Fixed spaces and typos in the IDs -->
+        <audio id="background-music" src="the_mountain-retro-game-593063.mp3" preload="auto"></audio>
+        <audio id="wind" src="SoundClip.mp3" preload="auto"></audio>
+      </a-assets>
 
+      <!-- 3. Fixed the broken double quotes around the rotation attribute -->
+      <a-plane position="0 0 -10" rotation="-90 0 0" sound="src: #wind; on: click; volume: 1" width="60" height="60" color="#7BC8A4"></a-plane>
 
-       
-        </a-scene>
-        <script>
+      <a-box color="orange" position="0 1 -10" depth="2" height="2" width="2" 
+             animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 2000; easing: linear; loop: true;" 
+             animation__2="property: position; from: 0 1 -10; to: 0 8 -10; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
+             animation__3="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-box>
+
+      <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="-6 6 -10" 
+              animation="property: position; from: -6 6 -10; to: -6 6 8; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
+              animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-cone>
+
+      <a-sphere color="crimson" radius="1" position="-3 1 10" 
+                animation="property: position; from: -3 1 10; to: -8 5 10; dir: alternate; dur: 1900; easing: easeInOutElastic; loop: true;" 
+                animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-sphere>
+    </a-scene>
+
+    <script>
       document.addEventListener('DOMContentLoaded', () => {
-      const scene = document.querySelector('a-scene');
-      const music = document.querySelector('#music');
+        const scene = document.querySelector('#scene');
+        
+        const startMusic = () => {
+          // 4. Targeted the scene's sound component directly to trigger playback
+          if (scene.components.sound) {
+            scene.components.sound.playSound();
+          }
+        };
 
-      const startMusic = () => {
-      music.components.sound.playSound();
-    };
-
-    // Fires once on the first user interaction
-    scene.addEventListener('mousemove', startMusic, { once: true });
-    window.addEventListener('touchstart', startMusic, { once: true });
-  });
-</script>
-
-    </body>
+        // Fires once on the first user interaction to bypass browser autoplay blocks
+        scene.addEventListener('mousemove', startMusic, { once: true });
+        window.addEventListener('touchstart', startMusic, { once: true });
+      });
+    </script>
+  </body>
 </html>
