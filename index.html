@@ -4,12 +4,13 @@
         <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
     </head>
     <body>
-        <a-scene>
+       <a-scene sound="src: #backround music; autoplay: true; loop: true; volume: 0.5">
                <a-camera>
              <a-cursor></a-cursor>
           </a-camera>
    
             <a-assets>
+        <audio id="Backround music" src="the_mountain-retro-game-593063.mp3" preload="auto"></audio>
       <audio id="Wind" src="SoundClip.mp3" preload="auto"></audio>
  </a-assets>
 
