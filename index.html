@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+    <script src="https://aframe.io"></script>
   </head>
   <body>
-    <!-- Turned off all default A-Frame injected popups and UI overlays -->
-    <a-scene sound="src: #bgmusic; autoplay: true; loop: true; volume: 0.5"
-             device-orientation-permission-ui="enabled: false"
-             xr-mode-ui="enabled: false">
+    <!-- Cleaned up scene with no audio elements or injected overlays -->
+    <a-scene device-orientation-permission-ui="enabled: false" xr-mode-ui="enabled: false">
       
       <a-camera>
         <a-cursor></a-cursor>
       </a-camera>
 
-      <a-assets>
-        <audio id="bgmusic" src="the_mountain-retro-game-593063.mp3" preload="auto"></audio>
-        <audio id="Wind" src="SoundClip.mp3" preload="auto"></audio>
-      </a-assets>
-
-      <a-plane position="0 0 -10" sound="src: #Wind; on: click; volume: 1" rotation="-90 0 0" width="60" height="60" color="#7BC8A4"></a-plane>
+      <!-- The floor plane without any audio interactions -->
+      <a-plane position="0 0 -10" rotation="-90 0 0" width="60" height="60" color="#7BC8A4"></a-plane>
 
       <a-box color="orange" position="0 1 -10" depth="2" height="2" width="2" 
              animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 2000; easing: linear; loop: true;" 
