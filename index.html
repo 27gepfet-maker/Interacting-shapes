@@ -3,10 +3,11 @@
   <head>
     <script src="https://aframe.io"></script>
     <style>
+      /* Splash screen to force an official browser user click gesture */
       #overlay {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(18, 18, 18, 0.95);
+        background: #111;
         z-index: 99999;
         display: flex;
         flex-direction: column;
@@ -24,34 +25,29 @@
         color: black;
         cursor: pointer;
         font-weight: bold;
-        box-shadow: 0 4px 15px rgba(123, 200, 164, 0.4);
-        transition: transform 0.2s;
-      }
-      #start-btn:hover {
-        transform: scale(1.05);
       }
     </style>
   </head>
   <body>
 
     <div id="overlay">
-      <h2>3D Audio Environment Ready</h2>
-      <button id="start-btn">ENTER SCENE & START MUSIC</button>
+      <h2>3D Audio Scene Ready</h2>
+      <button id="start-btn">CLICK TO ENTER SCENE & PLAY MUSIC</button>
     </div>
 
-    <!-- Removed autonomous sound component from scene to avoid conflicts -->
     <a-scene id="scene">
       <a-camera>
         <a-cursor></a-cursor>
       </a-camera>
 
       <a-assets>
-        <!-- Standard HTML5 Audio nodes handled by our direct browser trigger -->
+        <!-- Your original local background music track -->
         <audio id="background-music" src="the_mountain-retro-game-593063.mp3" loop preload="auto"></audio>
+        <!-- Your original local wind track -->
         <audio id="wind" src="SoundClip.mp3" preload="auto"></audio>
       </a-assets>
 
-      <!-- Attached a direct click handler component to the ground plane -->
+      <!-- Fixed double quotes issue around rotation attribute -->
       <a-plane position="0 0 -10" rotation="-90 0 0" width="60" height="60" color="#7BC8A4"
                onclick="document.getElementById('wind').play()"></a-plane>
 
@@ -77,19 +73,18 @@
       startBtn.addEventListener('click', () => {
         overlay.style.display = 'none';
 
-        // FORCE WAKE: Wakes up the web browser's native audio timeline
-        if (THREE.AudioContext && THREE.AudioContext.getContext) {
-          const context = THREE.AudioContext.getContext();
-          if (context.state === 'suspended') {
-            context.resume(); // Unlocks Web Audio hardware natively
+        // Unlock browser's master Web Audio context channel directly
+        if (window.AudioContext || window.webkitAudioContext) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          const ctx = new AudioCtx();
+          if (ctx.state === 'suspended') {
+            ctx.resume();
           }
         }
 
-        // Direct HTML5 execution bypasses A-Frame loading glitches
+        // Run your background music file natively at 50% volume
         bgMusic.volume = 0.5;
-        bgMusic.play().catch(err => {
-          console.error("Audio playback stalled: ", err);
-        });
+        bgMusic.play().catch(err => console.log("Audio failed to run:", err));
       });
     </script>
   </body>
