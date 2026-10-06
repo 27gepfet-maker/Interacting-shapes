@@ -2,88 +2,58 @@
 <html>
   <head>
     <script src="https://aframe.io"></script>
-    <style>
-      #overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: #111;
-        z-index: 99999;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        font-family: sans-serif;
-      }
-      #start-btn {
-        padding: 16px 32px;
-        font-size: 20px;
-        background: #7BC8A4;
-        border: none;
-        border-radius: 8px;
-        color: black;
-        cursor: pointer;
-        font-weight: bold;
-      }
-    </style>
   </head>
   <body>
+    <a-scene>
+      <a-assets>
+        <audio id="background-music" src="the_mountain_retro_game_593063.mp3" preload="auto"></audio>
+        <audio id="wind-sound" src="SoundClip.mp3" preload="auto"></audio>
+      </a-assets>
 
-    <div id="overlay">
-      <h2>3D Audio Scene Ready</h2>
-      <button id="start-btn">CLICK TO ENTER SCENE & PLAY MUSIC</button>
-    </div>
+      <!-- Background Audio -->
+      <a-sound src="#background-music" autoplay="true" loop="true" volume="0.5"></a-sound>
 
-    <a-scene id="scene">
+      <!-- Camera and Cursor -->
       <a-camera>
         <a-cursor></a-cursor>
       </a-camera>
 
-      <a-assets>
-        <!-- Added explicit relative paths and cross-origin handling for local media -->
-        <audio id="background-music" src="./the_mountain-retro-game-593063.mp3" loop crossorigin="anonymous" preload="auto"></audio>
-        <audio id="wind" src="./SoundClip.mp3" crossorigin="anonymous" preload="auto"></audio>
-      </a-assets>
+      <!-- Environment Plane -->
+      <a-plane position="0 0 10" sound="src: #wind-sound; on: click; volume: 1" rotation="90 0 0" width="60" height="60" color="#7BC8A4"></a-plane>
 
-      <a-plane position="0 0 -10" rotation="-90 0 0" width="60" height="60" color="#7BC8A4"
-               onclick="document.getElementById('wind').play()"></a-plane>
+      <!-- Animated Box -->
+      <a-box color="orange" position="0 1 10" depth="2" height="2" width="2"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 2000; easing: linear; loop: true"
+        animation__2="property: position; from: 0 1 10; to: 0 8 10; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true"
+        animation__3="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click">
+      </a-box>
 
-      <a-box color="orange" position="0 1 -10" depth="2" height="2" width="2" 
-             animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 2000; easing: linear; loop: true;" 
-             animation__2="property: position; from: 0 1 -10; to: 0 8 -10; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
-             animation__3="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-box>
+      <!-- Animated Cone -->
+      <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="6 6 10"
+        animation="property: position; from: 6 6 10; to: 6 6 8; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true"
+        animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click">
+      </a-cone>
 
-      <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="-6 6 -10" 
-              animation="property: position; from: -6 6 -10; to: -6 6 8; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
-              animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-cone>
-
-      <a-sphere color="crimson" radius="1" position="-3 1 10" 
-                animation="property: position; from: -3 1 10; to: -8 5 10; dir: alternate; dur: 1900; easing: easeInOutElastic; loop: true;" 
-                animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-sphere>
+      <!-- Animated Sphere -->
+      <a-sphere color="crimson" radius="1" position="3 1 10"
+        animation="property: position; from: 3 1 10; to: 8 5 10; dir: alternate; dur: 1900; easing: easeInOutElastic; loop: true"
+        animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click">
+      </a-sphere>
     </a-scene>
 
     <script>
-      const overlay = document.querySelector('#overlay');
-      const startBtn = document.querySelector('#start-btn');
-      const bgMusic = document.querySelector('#background-music');
-
-      startBtn.addEventListener('click', () => {
-        overlay.style.display = 'none';
-
-        // Unlock browser audio hardware context manually on user interaction 
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) {
-          const ctx = new AudioContext();
-          if (ctx.state === 'suspended') {
-            ctx.resume();
+      document.addEventListener('DOMContentLoaded', () => {
+        const scene = document.querySelector('a-scene');
+        const music = document.querySelector('#background-music');
+        
+        const startMusic = () => {
+          if (music && music.components && music.components.sound) {
+            music.components.sound.playSound();
           }
-        }
+        };
 
-        // Initialize local background playback directly via Javascript DOM
-        bgMusic.volume = 0.5;
-        bgMusic.play().catch(err => {
-          console.error("Local file route failed to resolve: ", err);
-        });
+        scene.addEventListener('mousemove', startMusic, { once: true });
+        window.addEventListener('touchstart', startMusic, { once: true });
       });
     </script>
   </body>
