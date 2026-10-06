@@ -1,1 +1,38 @@
-<!DOCTYPE html> <html> <head> <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script> </head> <body> <a-scene> <a-camera> <a-cursor></a-cursor> </a-camera> <a-assets> <audio id="Backround music" src="the_mountain-retro-game-593063.mp3" preload="auto"></audio> <audio id="Wind" src="SoundClip.mp3" preload="auto"></audio> </a-assets> <a-plane position="0 0 -10" sound="src: #Wind; on: click; volume: 1; rotation="-90 0 0" width="60" height="60" color="#7BC8A4" ></a-plane> <a-box color="orange" position="0 1 -10" depth="2" height="2" width="2" animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 2000; easing: linear; loop: true;" animation__2=" property: position; from: 0 1 -10; to: 0 8 -10; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" animation__3=" property: scale; from: 1 1 1; to: 0 0 0; startEvents:click;"></a-box> <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="-6 6 -10" animation="property: position; from: -6 6 -10; to: -6 6 8; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" animation__2=" property: scale; from: 1 1 1; to: 0 0 0; startEvents:click;"></a-cone> <a-sphere color="crimson" radius="1" position="-3 1 10" animation="property: position; from: -3 1 10; to: -8 5 10; dir: alternate; dur: 1900; easing: easeInOutElastic; loop: true;" animation__2=" property: scale; from: 1 1 1; to: 0 0 0; startEvents:click;" ></a-sphere> </a-scene> </body> </html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <!-- 2. Attached the sound component here to play globally in the background -->
+    <a-scene sound="src: #bgmusic; autoplay: true; loop: true; volume: 0.5">
+      
+      <a-camera>
+        <a-cursor></a-cursor>
+      </a-camera>
+
+      <a-assets>
+        <!-- 1. Changed ID to remove the space character -->
+        <audio id="bgmusic" src="the_mountain-retro-game-593063.mp3" preload="auto"></audio>
+        <audio id="Wind" src="SoundClip.mp3" preload="auto"></audio>
+      </a-assets>
+
+      <!-- Fixed a minor quote syntax issue on your rotation attribute here -->
+      <a-plane position="0 0 -10" sound="src: #Wind; on: click; volume: 1" rotation="-90 0 0" width="60" height="60" color="#7BC8A4"></a-plane>
+
+      <a-box color="orange" position="0 1 -10" depth="2" height="2" width="2" 
+             animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 2000; easing: linear; loop: true;" 
+             animation__2="property: position; from: 0 1 -10; to: 0 8 -10; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
+             animation__3="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-box>
+
+      <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="-6 6 -10" 
+              animation="property: position; from: -6 6 -10; to: -6 6 8; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
+              animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-cone>
+
+      <a-sphere color="crimson" radius="1" position="-3 1 10" 
+                animation="property: position; from: -3 1 10; to: -8 5 10; dir: alternate; dur: 1900; easing: easeInOutElastic; loop: true;" 
+                animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;"></a-sphere>
+
+    </a-scene>
+  </body>
+</html>
