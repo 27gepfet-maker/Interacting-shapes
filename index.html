@@ -1,22 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- FIX 1: Using a verified, working CDN version of A-Frame -->
+    <!-- FIX 1: Linked a real, working CDN version of A-Frame -->
     <script src="https://aframe.io"></script>
     
     <script>
-      // FIX 2: Custom component that plays sound AND handles the disappearing act safely
       AFRAME.registerComponent('interact-object', {
         init: function () {
           var el = this.el;
           
           el.addEventListener('click', function () {
-            // 1. Play the sound clip if it exists on the element
             if (el.components.sound) {
               el.components.sound.playSound();
             }
             
-            // 2. Animate the scale to 0 0 0 smoothly over 200ms so the sound triggers first
             el.setAttribute('animation__disappear', {
               property: 'scale',
               to: '0 0 0',
@@ -24,7 +21,6 @@
               easing: 'easeInQuad'
             });
             
-            // 3. Remove the object from the space completely after it shrinks
             setTimeout(function() {
               el.parentNode.removeChild(el);
             }, 200);
@@ -37,23 +33,20 @@
     <a-scene>
       
       <a-assets>
-        <!-- Replace these URLs with your actual local audio files if hosting offline -->
-        <audio id="bgm-asset" src="https://aframe.io" preload="auto"></audio>
-        <audio id="click-sfx" src="https://aframe.io" preload="auto"></audio>
+        <!-- FIX 4: Changed paths back to your local files so they can decode properly -->
+        <audio id="bgm-asset" src="background.mp3" preload="auto"></audio>
+        <audio id="click-sfx" src="sound1.mp3" preload="auto"></audio>
       </a-assets>
 
-      <!-- Background Music Entity -->
+      
       
 
-      <!-- Camera with Cursor to allow clicking on desktop/mobile -->
       <a-camera>
         <a-cursor color="black" raycaster="objects: [interact-object]"></a-cursor>
       </a-camera>
 
-      <!-- Ground Plane -->
       <a-plane position="0 0 -10" rotation="-90 0 0" width="60" height="60" color="#7BC8A4"></a-plane>
 
-      <!-- Orange Box (Has Sound + Custom Component) -->
       <a-box color="orange" position="0 1 -10" depth="2" height="2" width="2" 
              sound="src: #click-sfx; autoplay: false; poolSize: 5"
              interact-object
@@ -61,14 +54,12 @@
              animation__2="property: position; from: 0 1 -10; to: 0 5 -10; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;">
       </a-box>
 
-      <!-- Blue Cone (Has Custom Component) -->
       <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="-6 4 -10" 
               sound="src: #click-sfx; autoplay: false; poolSize: 5"
               interact-object
               animation="property: position; from: -6 4 -10; to: -6 4 2; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;">
       </a-cone>
 
-      <!-- Crimson Sphere (Has Custom Component) -->
       <a-sphere color="crimson" radius="1" position="-3 1 -5" 
                 sound="src: #click-sfx; autoplay: false; poolSize: 5"
                 interact-object
@@ -77,15 +68,13 @@
 
     </a-scene>
 
+    
     <script>
-      // FIX 3: Reliable Browser Autoplay Policy Bypass
-      // Modern browsers completely block audio until a definitive user gesture happens.
       const startAudioContext = () => {
         const bgmEntity = document.querySelector('#bgm');
         if (bgmEntity && bgmEntity.components && bgmEntity.components.sound) {
           bgmEntity.components.sound.playSound();
         }
-        // Remove the listeners immediately so it only executes once
         window.removeEventListener('click', startAudioContext);
         window.removeEventListener('touchstart', startAudioContext);
       };
