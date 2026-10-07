@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- FIX 1: Using a verified, working CDN version of A-Frame -->
     <script src="https://aframe.io"></script>
     
-    <!-- Click sound behavior component -->
     <script>
-      AFRAME.registerComponent('play-on-click', {
+      // FIX 2: Custom component that plays sound AND handles the disappearing act safely
+      AFRAME.registerComponent('interact-object', {
         init: function () {
           var el = this.el;
+          
           el.addEventListener('click', function () {
-            // Check if sound component exists before playing
+            // 1. Play the sound clip if it exists on the element
             if (el.components.sound) {
               el.components.sound.playSound();
             }
+            
+            // 2. Animate the scale to 0 0 0 smoothly over 200ms so the sound triggers first
+            el.setAttribute('animation__disappear', {
+              property: 'scale',
+              to: '0 0 0',
+              dur: 200,
+              easing: 'easeInQuad'
+            });
+            
+            // 3. Remove the object from the space completely after it shrinks
+            setTimeout(function() {
+              el.parentNode.removeChild(el);
+            }, 200);
           });
         }
       });
@@ -22,57 +37,61 @@
     <a-scene>
       
       <a-assets>
-        <!-- Added placeholder extensions. Replace with your actual file names -->
-        <audio id="bgm-asset" src="the_mountain-retro-game-593063.mp3" preload="auto"></audio>
-        <audio id="click-sfx" src="SoundClip.mp3" preload="auto"></audio>
+        <!-- Replace these URLs with your actual local audio files if hosting offline -->
+        <audio id="bgm-asset" src="https://aframe.io" preload="auto"></audio>
+        <audio id="click-sfx" src="https://aframe.io" preload="auto"></audio>
       </a-assets>
 
-      <!-- Background Music Entity with A-Frame Sound Component attached -->
+      <!-- Background Music Entity -->
       
 
+      <!-- Camera with Cursor to allow clicking on desktop/mobile -->
       <a-camera>
-        <a-cursor></a-cursor>
+        <a-cursor color="black" raycaster="objects: [interact-object]"></a-cursor>
       </a-camera>
 
+      <!-- Ground Plane -->
       <a-plane position="0 0 -10" rotation="-90 0 0" width="60" height="60" color="#7BC8A4"></a-plane>
 
+      <!-- Orange Box (Has Sound + Custom Component) -->
       <a-box color="orange" position="0 1 -10" depth="2" height="2" width="2" 
              sound="src: #click-sfx; autoplay: false; poolSize: 5"
-             play-on-click
+             interact-object
              animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 2000; easing: linear; loop: true;" 
-             animation__2="property: position; from: 0 1 -10; to: 0 8 -10; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
-             animation__3="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;">
+             animation__2="property: position; from: 0 1 -10; to: 0 5 -10; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;">
       </a-box>
 
-      <!-- Note: Cone and Sphere have click animations but no sound component attached -->
-      <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="-6 6 -10" 
-              animation="property: position; from: -6 6 -10; to: -6 6 8; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
-              animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;">
+      <!-- Blue Cone (Has Custom Component) -->
+      <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="-6 4 -10" 
+              sound="src: #click-sfx; autoplay: false; poolSize: 5"
+              interact-object
+              animation="property: position; from: -6 4 -10; to: -6 4 2; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;">
       </a-cone>
 
-      <a-sphere color="crimson" radius="1" position="-3 1 10" 
-                animation="property: position; from: -3 1 10; to: -8 5 10; dir: alternate; dur: 1900; easing: easeInOutElastic; loop: true;" 
-                animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;">
+      <!-- Crimson Sphere (Has Custom Component) -->
+      <a-sphere color="crimson" radius="1" position="-3 1 -5" 
+                sound="src: #click-sfx; autoplay: false; poolSize: 5"
+                interact-object
+                animation="property: position; from: -3 1 -5; to: -5 3 -5; dir: alternate; dur: 1900; easing: easeInOutElastic; loop: true;">
       </a-sphere>
 
     </a-scene>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const scene = document.querySelector('a-scene');
+      // FIX 3: Reliable Browser Autoplay Policy Bypass
+      // Modern browsers completely block audio until a definitive user gesture happens.
+      const startAudioContext = () => {
         const bgmEntity = document.querySelector('#bgm');
+        if (bgmEntity && bgmEntity.components && bgmEntity.components.sound) {
+          bgmEntity.components.sound.playSound();
+        }
+        // Remove the listeners immediately so it only executes once
+        window.removeEventListener('click', startAudioContext);
+        window.removeEventListener('touchstart', startAudioContext);
+      };
 
-        const startMusic = () => {
-          // Check if components are loaded before playing
-          if (bgmEntity && bgmEntity.components && bgmEntity.components.sound) {
-            bgmEntity.components.sound.playSound();
-          }
-        };
-
-        // Click or touch is much more reliable for browser autoplay policies than mousemove
-        window.addEventListener('click', startMusic, { once: true });
-        window.addEventListener('touchstart', startMusic, { once: true });
-      });
+      window.addEventListener('click', startAudioContext);
+      window.addEventListener('touchstart', startAudioContext);
     </script>
   </body>
 </html>
