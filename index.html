@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- FIX 1: Linked a real, working CDN version of A-Frame -->
     <script src="https://aframe.io"></script>
-    
     <script>
       AFRAME.registerComponent('interact-object', {
         init: function () {
           var el = this.el;
-          
           el.addEventListener('click', function () {
-            if (el.components.sound) {
+            if (el.components && el.components.sound) {
               el.components.sound.playSound();
             }
-            
             el.setAttribute('animation__disappear', {
               property: 'scale',
               to: '0 0 0',
               dur: 200,
               easing: 'easeInQuad'
             });
-            
             setTimeout(function() {
-              el.parentNode.removeChild(el);
+              el.setAttribute('visible', false);
+              el.removeAttribute('interact-object'); 
             }, 200);
           });
         }
@@ -30,15 +26,12 @@
     </script>
   </head>
   <body>
-    <a-scene>
-      
+    <a-scene id="main-scene">
       <a-assets>
-        <!-- FIX 4: Changed paths back to your local files so they can decode properly -->
-        <audio id="bgm-asset" src="background.mp3" preload="auto"></audio>
-        <audio id="click-sfx" src="sound1.mp3" preload="auto"></audio>
+        <audio id="bgm-asset" src="uploaded-bgm.mp3" preload="auto"></audio>
+        <audio id="click-sfx" src="uploaded-sound.mp3" preload="auto"></audio>
       </a-assets>
 
-      
       
 
       <a-camera>
@@ -65,22 +58,27 @@
                 interact-object
                 animation="property: position; from: -3 1 -5; to: -5 3 -5; dir: alternate; dur: 1900; easing: easeInOutElastic; loop: true;">
       </a-sphere>
-
     </a-scene>
 
-    
     <script>
-      const startAudioContext = () => {
-        const bgmEntity = document.querySelector('#bgm');
-        if (bgmEntity && bgmEntity.components && bgmEntity.components.sound) {
-          bgmEntity.components.sound.playSound();
-        }
-        window.removeEventListener('click', startAudioContext);
-        window.removeEventListener('touchstart', startAudioContext);
+      const scene = document.querySelector('#main-scene');
+      const setupAudioBypass = () => {
+        const startOriginalAudio = () => {
+          const bgmEntity = document.querySelector('#bgm');
+          if (bgmEntity && bgmEntity.components && bgmEntity.components.sound) {
+            bgmEntity.components.sound.playSound();
+          }
+          window.removeEventListener('click', startOriginalAudio);
+          window.removeEventListener('touchstart', startOriginalAudio);
+        };
+        window.addEventListener('click', startOriginalAudio);
+        window.addEventListener('touchstart', startOriginalAudio);
       };
-
-      window.addEventListener('click', startAudioContext);
-      window.addEventListener('touchstart', startAudioContext);
+      if (scene.hasLoaded) {
+        setupAudioBypass();
+      } else {
+        scene.addEventListener('loaded', setupAudioBypass);
+      }
     </script>
   </body>
 </html>
