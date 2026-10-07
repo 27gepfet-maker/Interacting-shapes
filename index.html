@@ -9,7 +9,10 @@
         init: function () {
           var el = this.el;
           el.addEventListener('click', function () {
-            el.components.sound.playSound();
+            // Check if sound component exists before playing
+            if (el.components.sound) {
+              el.components.sound.playSound();
+            }
           });
         }
       });
@@ -19,11 +22,12 @@
     <a-scene>
       
       <a-assets>
-        <audio id="bgm" src="the_mountain-retro-game-593063" preload="auto"></audio>
+        <!-- Added placeholder extensions. Replace with your actual file names -->
+        <audio id="bgm-asset" src="the_mountain-retro-game-593063.mp3" preload="auto"></audio>
         <audio id="click-sfx" src="SoundClip.mp3" preload="auto"></audio>
       </a-assets>
 
-      
+      <!-- Background Music Entity with A-Frame Sound Component attached -->
       
 
       <a-camera>
@@ -40,6 +44,7 @@
              animation__3="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;">
       </a-box>
 
+      <!-- Note: Cone and Sphere have click animations but no sound component attached -->
       <a-cone color="blue" radius-bottom="2" radius-top="0.5" height="1" position="-6 6 -10" 
               animation="property: position; from: -6 6 -10; to: -6 6 8; dir: alternate; dur: 1500; easing: easeInOutElastic; loop: true;" 
               animation__2="property: scale; from: 1 1 1; to: 0 0 0; startEvents: click;">
@@ -52,18 +57,20 @@
 
     </a-scene>
 
-    <!-- The autoplay bypass script is now placed exactly under the ending scene tag -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const scene = document.querySelector('a-scene');
-        const music = document.querySelector('#music');
+        const bgmEntity = document.querySelector('#bgm');
 
         const startMusic = () => {
-          music.components.sound.playSound();
+          // Check if components are loaded before playing
+          if (bgmEntity && bgmEntity.components && bgmEntity.components.sound) {
+            bgmEntity.components.sound.playSound();
+          }
         };
 
-        // Fires once on the first user interaction
-        scene.addEventListener('mousemove', startMusic, { once: true });
+        // Click or touch is much more reliable for browser autoplay policies than mousemove
+        window.addEventListener('click', startMusic, { once: true });
         window.addEventListener('touchstart', startMusic, { once: true });
       });
     </script>
